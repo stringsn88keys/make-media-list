@@ -5,9 +5,17 @@ $LOAD_PATH.unshift(File.join(__dir__, 'lib'))
 
 require 'movie_list_formatter'
 
-# Configuration
-input_file = "formatted_mkv_list_updated.txt"
-output_file = "formatted_mkv_list_by_date.txt"
+# Load configuration
+config_path = File.join(__dir__, '.config.rb')
+if File.exist?(config_path)
+  require config_path
+  input_file = Config.updated_file
+  output_file = Config.grouped_file
+else
+  # Fallback to default names
+  input_file = "formatted_mkv_list_updated.txt"
+  output_file = "formatted_mkv_list_by_date.txt"
+end
 
 # Read existing formatted names with dates
 formatted_names = MovieListFormatter::FileUtils.read_lines(input_file)

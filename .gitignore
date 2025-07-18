@@ -1,1 +1,4 @@
 *.txt
+
+# Configuration file (contains user-specific paths)
+.config.rb

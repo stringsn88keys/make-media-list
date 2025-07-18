@@ -11,13 +11,21 @@ module MovieListFormatter
     end
 
     def self.get_video_path
-      case RUBY_PLATFORM
-      when /mswin|mingw|cygwin/
-        "\\\\videos\\media"
-      when /darwin/
-        "/Volumes/Media"
+      # Try to load configuration
+      config_path = File.join(__dir__, '..', '..', '.config.rb')
+      if File.exist?(config_path)
+        require config_path
+        Config.video_path
       else
-        "/videos/media"
+        # Fallback to hardcoded paths if config doesn't exist
+        case RUBY_PLATFORM
+        when /mswin|mingw|cygwin/
+          "\\\\videos\\media"
+        when /darwin/
+          "/Volumes/Media"
+        else
+          "/videos/media"
+        end
       end
     end
   end

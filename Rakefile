@@ -10,6 +10,24 @@ end
 # Default task
 task default: :test
 
+# Configuration setup task
+desc "Setup configuration file from example"
+task :setup_config do
+  config_file = ".config.rb"
+  example_file = ".config.rb.example"
+  
+  if File.exist?(config_file)
+    puts "Configuration file already exists at #{config_file}"
+    puts "Remove it first if you want to recreate it from the example."
+  elsif File.exist?(example_file)
+    FileUtils.cp(example_file, config_file)
+    puts "Created #{config_file} from #{example_file}"
+    puts "Edit #{config_file} to customize your configuration."
+  else
+    puts "Error: #{example_file} not found!"
+  end
+end
+
 # Custom tasks for the movie list scripts
 desc "Scan directory for MKV files and create initial list"
 task :scan do

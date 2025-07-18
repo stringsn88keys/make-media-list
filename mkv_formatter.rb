@@ -5,9 +5,17 @@ $LOAD_PATH.unshift(File.join(__dir__, 'lib'))
 
 require 'movie_list_formatter'
 
-# Configuration
+# Load configuration
+config_path = File.join(__dir__, '.config.rb')
+if File.exist?(config_path)
+  require config_path
+  output_file = Config.input_file
+else
+  # Fallback to default name
+  output_file = "formatted_mkv_list.txt"
+end
+
 video_path = MovieListFormatter::FileUtils.get_video_path
-output_file = "formatted_mkv_list.txt"
 
 # Check if the directory exists
 unless Dir.exist?(video_path)
