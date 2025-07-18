@@ -6,7 +6,14 @@ require 'time'
 # Read the current formatted list
 input_file = "formatted_mkv_list.txt"
 output_file = "formatted_mkv_list_updated.txt"
-video_path = "\\\\videos\\media"
+video_path = case RUBY_PLATFORM
+             when /mswin|mingw|cygwin/
+               "\\\\videos\\media"
+             when /darwin/
+              "/Volumes/Media"
+             else
+              "/videos/media"
+             end
 
 # Read existing formatted names
 formatted_names = File.readlines(input_file, chomp: true)

@@ -3,7 +3,14 @@
 require 'pathname'
 
 # Get all MKV files from the specified directory
-video_path = "\\\\videos\\media"
+video_path = case RUBY_PLATFORM
+             when /mswin|mingw|cygwin/
+               "\\\\videos\\media"
+             when /darwin/
+              "/Volumes/Media"
+             else
+              "/videos/media"
+             end
 output_file = "formatted_mkv_list.txt"
 
 # Check if the directory exists
