@@ -1,29 +1,16 @@
 #!/usr/bin/env ruby
 
-require 'pathname'
-require 'time'
-require 'date'
+# Add lib directory to load path
+$LOAD_PATH.unshift(File.join(__dir__, 'lib'))
 
-# Read the current formatted list
+require 'movie_list_formatter'
+
+# Configuration
 input_file = "formatted_mkv_list_updated.txt"
 output_file = "formatted_mkv_list_by_date.txt"
 
 # Read existing formatted names with dates
-formatted_names = File.readlines(input_file, chomp: true)
-
-# Function to extract date from the "added YYYY-MM-DD" format
-def extract_date(line)
-  if match = line.match(/- added (\d{4}-\d{2}-\d{2})$/)
-    Date.parse(match[1])
-  else
-    Date.new(1900, 1, 1) # Default to very old date for unknown dates
-  end
-end
-
-# Function to extract movie name without the date suffix
-def extract_movie_name(line)
-  line.gsub(/ - added \d{4}-\d{2}-\d{2}$/, '')
-end
+formatted_names = MovieListFormatter::FileUtils.read_lines(input_file)
 
 # Group movies by date
 movies_by_date = {}
@@ -31,8 +18,8 @@ movies_by_date = {}
 formatted_names.each do |line|
   next if line.strip.empty?
   
-  date = extract_date(line)
-  movie_name = extract_movie_name(line)
+  date = MovieListFormatter::DateUtils.extract_date(line)
+  movie_name = MovieListFormatter::DateUtils.extract_movie_name(line)
   
   date_key = date.strftime("%Y-%m-%d")
   movies_by_date[date_key] ||= []
@@ -46,7 +33,7 @@ sorted_dates = movies_by_date.keys.sort { |a, b| Date.parse(b) <=> Date.parse(a)
 File.open(output_file, 'w:UTF-8') do |f|
   sorted_dates.each do |date_str|
     date_obj = Date.parse(date_str)
-    formatted_date = date_obj.strftime("%B %d, %Y") # e.g., "July 18, 2025"
+    formatted_date = MovieListFormatter::DateUtils.format_date_display(date_obj)
     
     f.puts "=" * 60
     f.puts "ADDED ON #{formatted_date.upcase}"
@@ -62,13 +49,11 @@ File.open(output_file, 'w:UTF-8') do |f|
   end
 end
 
-puts "\nProcessing complete!"
-puts "Grouped #{formatted_names.length} movies by #{movies_by_date.keys.length} different dates"
-puts "Output written to: #{output_file}"
+MovieListFormatter::ProgressReporter.report_grouping_stats(formatted_names.length, movies_by_date.keys.length, output_file)
 puts "\nDates found (newest first):"
 sorted_dates.first(10).each do |date|
   date_obj = Date.parse(date)
-  formatted_date = date_obj.strftime("%B %d, %Y")
+  formatted_date = MovieListFormatter::DateUtils.format_date_display(date_obj)
   count = movies_by_date[date].length
   puts "  #{formatted_date}: #{count} movie#{'s' if count != 1}"
 end

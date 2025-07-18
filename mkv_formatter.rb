@@ -1,16 +1,12 @@
 #!/usr/bin/env ruby
 
-require 'pathname'
+# Add lib directory to load path
+$LOAD_PATH.unshift(File.join(__dir__, 'lib'))
 
-# Get all MKV files from the specified directory
-video_path = case RUBY_PLATFORM
-             when /mswin|mingw|cygwin/
-               "\\\\videos\\media"
-             when /darwin/
-              "/Volumes/Media"
-             else
-              "/videos/media"
-             end
+require 'movie_list_formatter'
+
+# Configuration
+video_path = MovieListFormatter::FileUtils.get_video_path
 output_file = "formatted_mkv_list.txt"
 
 # Check if the directory exists
@@ -30,11 +26,8 @@ end
 # Process each file and convert to title case
 formatted_names = []
 mkv_files.each do |file|
-  # Get filename without extension
-  name_without_ext = File.basename(file, ".*")
-  
-  # Convert to title case
-  title_case = name_without_ext.downcase.split(/[\s_-]+/).map(&:capitalize).join(' ')
+  # Convert filename to title case using shared utility
+  title_case = MovieListFormatter::TextFormatter.filename_to_title_case(file)
   
   # Add to array
   formatted_names << title_case
@@ -44,9 +37,7 @@ end
 formatted_names.sort!
 
 # Output to text file
-File.open(output_file, 'w:UTF-8') do |f|
-  formatted_names.each { |name| f.puts name }
-end
+MovieListFormatter::FileUtils.write_lines(output_file, formatted_names)
 
 puts "Formatted #{mkv_files.length} MKV filenames to '#{output_file}'"
 puts "Files processed from: #{video_path}"
