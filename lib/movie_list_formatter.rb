@@ -13,4 +13,5 @@ module MovieListFormatter
   require_relative 'movie_list_formatter/text_formatter'
   require_relative 'movie_list_formatter/date_utils'
   require_relative 'movie_list_formatter/progress_reporter'
+  require_relative 'movie_list_formatter/acronyms'
 end

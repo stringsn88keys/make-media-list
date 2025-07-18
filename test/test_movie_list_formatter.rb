@@ -38,8 +38,44 @@ class TestMovieListFormatter < Minitest::Test
   end
 
   def test_format_title_full
-    input = "star trek ii 1982"
-    expected = "star trek II (1982)"
+    input = "star trek ii 1982 bbc"
+    expected = "star trek II (1982) BBC"
+    result = MovieListFormatter::TextFormatter.format_title(input)
+    assert_equal expected, result
+  end
+
+  def test_capitalize_bbc
+    input = "Pride And Prejudice Disc 1 Bbc Colin Firth"
+    expected = "Pride And Prejudice Disc 1 BBC Colin Firth"
+    result = MovieListFormatter::TextFormatter.format_title(input)
+    assert_equal expected, result
+  end
+
+  # Test Acronyms module
+  def test_capitalize_acronyms_bbc
+    input = "bbc news"
+    expected = "BBC news"
+    result = MovieListFormatter::Acronyms.capitalize_acronyms(input)
+    assert_equal expected, result
+  end
+
+  def test_capitalize_acronyms_mtv
+    input = "mtv unplugged"
+    expected = "MTV unplugged"
+    result = MovieListFormatter::Acronyms.capitalize_acronyms(input)
+    assert_equal expected, result
+  end
+
+  def test_capitalize_multiple_acronyms
+    input = "mtv and bbc news"
+    expected = "MTV and BBC news"
+    result = MovieListFormatter::Acronyms.capitalize_acronyms(input)
+    assert_equal expected, result
+  end
+
+  def test_format_title_with_acronyms
+    input = "mtv unplugged pearl jam 1992"
+    expected = "MTV unplugged pearl jam (1992)"
     result = MovieListFormatter::TextFormatter.format_title(input)
     assert_equal expected, result
   end

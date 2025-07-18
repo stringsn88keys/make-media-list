@@ -35,6 +35,7 @@ module MovieListFormatter
       result = text
       result = capitalize_roman_numerals(result)
       result = format_years(result)
+      result = MovieListFormatter::Acronyms.capitalize_acronyms(result)
       result
     end
   end
