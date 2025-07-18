@@ -1,4 +1,5 @@
 require 'rake/testtask'
+require 'fileutils'
 
 # Define test task
 Rake::TestTask.new(:test) do |t|
@@ -14,7 +15,7 @@ task default: :test
 desc "Setup configuration file from example"
 task :setup_config do
   config_file = ".config.rb"
-  example_file = ".config.rb.example"
+  example_file = ".config.example.rb"
   
   if File.exist?(config_file)
     puts "Configuration file already exists at #{config_file}"
